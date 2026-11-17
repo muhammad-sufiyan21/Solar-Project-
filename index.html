@@ -139,6 +139,32 @@ footer {
 @media(prefers-reduced-motion:reduce) {
   *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; }
 }
+
+.panel { max-height: calc(100% - 24px); overflow-y: auto; }
+.mini { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+.mini div { padding:11px; border-radius:12px; background:rgba(169,148,255,.1); }
+.mini small { display:block; color:#b9c2dc; font-size:9px; letter-spacing:1px; }
+.mini strong { display:block; margin-top:5px; font:700 16px 'Space Grotesk',sans-serif; color:#c5b7ff; }
+.topic { max-width:940px; margin:0 auto 70px; padding:0 22px; }
+.topic h2 { font:700 clamp(24px,4vw,34px)/1.2 'Space Grotesk',sans-serif; letter-spacing:-1px; margin:0 0 10px; }
+.lead { color:var(--muted); line-height:1.8; font-size:14px; max-width:640px; margin:0 0 22px; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.wide { grid-column:1 / -1; }
+.info-card ul { margin:0; padding-left:18px; color:var(--muted); font-size:13px; line-height:1.9; }
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.calc-grid .field:first-child { margin-top:0; }
+.chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.chip {
+  padding:7px 13px; border:1px solid rgba(169,148,255,.5); border-radius:20px;
+  background:transparent; color:#e9e7ff; font:600 12px 'DM Sans',sans-serif; cursor:pointer;
+}
+.chip:hover { background:rgba(169,148,255,.16); }
+.note { color:var(--cyan); font-size:12px; margin:10px 0 0; min-height:18px; }
+button:focus-visible, input:focus-visible { outline:2px solid var(--cyan); outline-offset:2px; }
+@media(max-width:760px) {
+  .grid2, .calc-grid { grid-template-columns:1fr; }
+  .panel { max-height:70%; }
+}
 </style>
 </head>
 <body>
@@ -176,7 +202,11 @@ footer {
         <p>THE OBJECT'S WEIGHT HERE</p>
         <strong id="weightResult">490.50 N</strong>
       </div>
-      <p class="formula">Weight = Mass × Gravitational acceleration</p>
+      <div class="mini">
+        <div><small>ESCAPE VELOCITY</small><strong id="escV">11.19 km/s</strong></div>
+        <div><small>SURFACE POTENTIAL</small><strong id="potV">-62.6 MJ/kg</strong></div>
+      </div>
+      <p class="formula">W = m × g &nbsp;·&nbsp; g = GM/R² &nbsp;·&nbsp; V = −GM/R &nbsp;·&nbsp; v = √(2GM/R)</p>
     </aside>
   </section>
 
@@ -191,9 +221,94 @@ footer {
       <div class="equation">W = m × g</div>
     </article>
   </section>
+
+  <section class="topic" id="newton">
+    <h2>Newton's law of universal gravitation</h2>
+    <p class="lead">Every mass attracts every other mass. The force grows with the product of the masses and falls with the square of the distance between them. The values below are the Earth and the Moon.</p>
+    <div class="info-card calc-grid">
+      <div>
+        <label class="field" for="m1">Mass 1 (kg)</label>
+        <input id="m1" type="number" step="any" value="5.972e24">
+        <label class="field" for="m2">Mass 2 (kg)</label>
+        <input id="m2" type="number" step="any" value="7.342e22">
+        <label class="field" for="dist">Distance between centres (m)</label>
+        <input id="dist" type="number" step="any" value="3.844e8">
+        <div class="chips"><button class="chip" id="doubleR">Double the distance</button></div>
+      </div>
+      <div>
+        <div class="result"><p>GRAVITATIONAL FORCE</p><strong id="forceOut">—</strong></div>
+        <p class="note" id="doubleNote"></p>
+        <p class="formula">F = G·m₁·m₂ / r² &nbsp;·&nbsp; G = 6.674 × 10⁻¹¹ N·m²/kg²</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="fields">
+    <h2>Field, potential and orbital motion</h2>
+    <p class="lead">Select a planet above to see its escape velocity and surface potential. These cards explain where those numbers come from.</p>
+    <div class="grid2">
+      <article class="info-card">
+        <h3>Gravitational field</h3>
+        <p>The field is the force a mass M produces on each kilogram placed at distance r. It points toward M. At Earth's surface it equals the acceleration due to gravity, about 9.81 m/s².</p>
+        <div class="equation">g = GM / r²</div>
+      </article>
+      <article class="info-card">
+        <h3>Gravitational potential</h3>
+        <p>Potential is the work done per kilogram in bringing a body from infinity to a point. It is negative because gravity is attractive. Setting kinetic energy equal to this depth gives the escape velocity.</p>
+        <div class="equation">V = −GM / r</div>
+      </article>
+      <article class="info-card">
+        <h3>Kepler's laws</h3>
+        <ul>
+          <li>Planets move in ellipses with the Sun at one focus.</li>
+          <li>A line from the Sun to a planet sweeps equal areas in equal times.</li>
+          <li>The square of the orbital period is proportional to the cube of the orbit's size: T² ∝ r³.</li>
+        </ul>
+      </article>
+      <article class="info-card">
+        <h3>Satellite around the Earth</h3>
+        <label class="field" for="alt" style="margin-top:4px">Height above the surface (km)</label>
+        <input id="alt" type="number" min="0" step="any" value="400">
+        <div class="mini">
+          <div><small>ORBITAL SPEED</small><strong id="orbV">—</strong></div>
+          <div><small>TIME PER ORBIT</small><strong id="orbT">—</strong></div>
+        </div>
+        <p class="formula">v = √(GM / r) &nbsp;·&nbsp; T = 2π√(r³ / GM)</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="topic" id="modern">
+    <h2>Beyond Newton: modern gravitation</h2>
+    <p class="lead">Newton's law works very well for planets and satellites. Einstein's theory is needed when gravity is extremely strong or when precision matters.</p>
+    <div class="grid2">
+      <article class="info-card">
+        <h3>General relativity</h3>
+        <p>In 1915 Einstein described gravity as the curvature of spacetime caused by mass and energy. Matter tells spacetime how to curve, and spacetime tells matter how to move. The theory explains the bending of starlight by the Sun and the slow rotation of Mercury's orbit, which Newton's law could not fully explain.</p>
+        <div class="equation">Gμν = (8πG / c⁴) Tμν</div>
+      </article>
+      <article class="info-card">
+        <h3>Black holes</h3>
+        <p>Inside the event horizon, not even light can escape. The horizon's radius for a mass M is the Schwarzschild radius.</p>
+        <div class="equation" style="margin-bottom:12px">Rs = 2GM / c²</div>
+        <label class="field" for="bhMass" style="margin-top:4px">Mass (in solar masses)</label>
+        <input id="bhMass" type="number" min="0" step="any" value="1">
+        <div class="chips">
+          <button class="chip" data-bh="3.003e-6">Earth</button>
+          <button class="chip" data-bh="1">Sun</button>
+          <button class="chip" data-bh="4.3e6">Sagittarius A*</button>
+        </div>
+        <div class="result"><p>EVENT HORIZON RADIUS</p><strong id="bhOut">—</strong></div>
+      </article>
+      <article class="info-card wide">
+        <h3>Gravitational waves</h3>
+        <p>Accelerating masses, such as two black holes merging, send ripples through spacetime. LIGO made the first direct detection in September 2015, a century after Einstein predicted them. The 2017 Nobel Prize in Physics was awarded for this work. The first image of a black hole, in the galaxy M87, followed in 2019.</p>
+      </article>
+    </div>
+  </section>
 </main>
 
-<footer>AN INTERACTIVE PHYSICS PROJECT · GRAVITATION</footer>
+<footer>AN INTERACTIVE PHYSICS PROJECT · GRAVITATION · PLANET SIZES AND ORBIT DISTANCES ARE NOT TO SCALE</footer>
 
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
@@ -244,14 +359,14 @@ scene.add(stars);
 
 // Visual orbit distances are compressed so all planets remain visible.
 const planets = [
-  { name:'Mercury', radius:.34, orbit:4.3, speed:.90, gravity:3.70, color:0xaaa39b, desc:'The smallest planet, with a thin and rocky surface.' },
-  { name:'Venus', radius:.53, orbit:6.5, speed:.66, gravity:8.87, color:0xe6b86f, desc:'A rocky world with a very thick atmosphere.' },
-  { name:'Earth', radius:.58, orbit:8.9, speed:.52, gravity:9.81, color:0x318ce7, desc:'Our home planet. Its surface gravity is about 9.81 m/s².' },
-  { name:'Mars', radius:.44, orbit:11.4, speed:.40, gravity:3.71, color:0xc65c39, desc:'The Red Planet has less than half of Earth’s surface gravity.' },
-  { name:'Jupiter', radius:1.05, orbit:15.0, speed:.22, gravity:24.79, color:0xd7ad82, desc:'The largest planet in our solar system, with very strong surface gravity.' },
-  { name:'Saturn', radius:.91, orbit:19.0, speed:.16, gravity:10.44, color:0xd9c18a, desc:'A gas giant famous for its spectacular rings.' },
-  { name:'Uranus', radius:.70, orbit:23.0, speed:.12, gravity:8.69, color:0x83d5dc, desc:'A distant ice giant with a blue-green appearance.' },
-  { name:'Neptune', radius:.68, orbit:27.0, speed:.095, gravity:11.15, color:0x3f68d7, desc:'A cold, distant ice giant with powerful winds.' }
+  { name:'Mercury', radius:.34, orbit:4.3, speed:.90, gravity:3.70, mass:3.301e23, rad:2.4397e6, color:0xaaa39b, desc:'The smallest planet, with a thin and rocky surface.' },
+  { name:'Venus', radius:.53, orbit:6.5, speed:.66, gravity:8.87, mass:4.867e24, rad:6.0518e6, color:0xe6b86f, desc:'A rocky world with a very thick atmosphere.' },
+  { name:'Earth', radius:.58, orbit:8.9, speed:.52, gravity:9.81, mass:5.972e24, rad:6.371e6, color:0x318ce7, desc:'Our home planet. Its surface gravity is about 9.81 m/s².' },
+  { name:'Mars', radius:.44, orbit:11.4, speed:.40, gravity:3.71, mass:6.417e23, rad:3.3895e6, color:0xc65c39, desc:'The Red Planet has less than half of Earth’s surface gravity.' },
+  { name:'Jupiter', radius:1.05, orbit:15.0, speed:.22, gravity:24.79, mass:1.898e27, rad:6.9911e7, color:0xd7ad82, desc:'The largest planet in our solar system, with very strong surface gravity.' },
+  { name:'Saturn', radius:.91, orbit:19.0, speed:.16, gravity:10.44, mass:5.683e26, rad:5.8232e7, color:0xd9c18a, desc:'A gas giant famous for its spectacular rings.' },
+  { name:'Uranus', radius:.70, orbit:23.0, speed:.12, gravity:8.69, mass:8.681e25, rad:2.5362e7, color:0x83d5dc, desc:'A distant ice giant with a blue-green appearance.' },
+  { name:'Neptune', radius:.68, orbit:27.0, speed:.095, gravity:11.15, mass:1.024e26, rad:2.4622e7, color:0x3f68d7, desc:'A cold, distant ice giant with powerful winds.' }
 ];
 
 const planetMeshes = [];
@@ -343,6 +458,9 @@ function selectPlanet(data) {
   document.getElementById('planetDescription').textContent = data.desc;
   document.getElementById('gravityValue').textContent = data.gravity.toFixed(2);
   panel.classList.add('visible');
+  const GG = 6.674e-11;
+  document.getElementById('escV').textContent = (Math.sqrt(2 * GG * data.mass / data.rad) / 1000).toFixed(2) + ' km/s';
+  document.getElementById('potV').textContent = (-GG * data.mass / data.rad / 1e6).toFixed(1) + ' MJ/kg';
   updateWeight();
 }
 
@@ -380,6 +498,62 @@ function animate() {
   renderer.render(scene, camera);
 }
 animate();
+</script>
+<script>
+(function () {
+  var G = 6.674e-11, C = 2.998e8, GM_E = 3.986004e14, R_E = 6.371e6, M_SUN = 1.989e30;
+  var SUP = { '-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
+  function sci(x, unit) {
+    var parts = x.toExponential(3).split('e'), exp = parseInt(parts[1], 10);
+    if (Math.abs(exp) < 4) return x.toPrecision(4) + ' ' + unit;
+    var sup = String(exp).split('').map(function (ch) { return SUP[ch] || ''; }).join('');
+    return parts[0] + ' × 10' + sup + ' ' + unit;
+  }
+  function val(id) { return Number(document.getElementById(id).value); }
+  function $(id) { return document.getElementById(id); }
+
+  function force() {
+    var m1 = val('m1'), m2 = val('m2'), r = val('dist');
+    $('doubleNote').textContent = '';
+    if (!(m1 > 0 && m2 > 0 && r > 0)) { $('forceOut').textContent = 'Enter positive numbers'; return; }
+    $('forceOut').textContent = sci(G * m1 * m2 / (r * r), 'N');
+  }
+  ['m1', 'm2', 'dist'].forEach(function (id) { $(id).addEventListener('input', force); });
+  $('doubleR').addEventListener('click', function () {
+    var r = val('dist');
+    if (!(r > 0)) return;
+    $('dist').value = r * 2;
+    force();
+    $('doubleNote').textContent = 'Distance doubled, so the force is now one quarter.';
+  });
+
+  function orbit() {
+    var h = val('alt');
+    if (!(h >= 0)) { $('orbV').textContent = '—'; $('orbT').textContent = '—'; return; }
+    var r = R_E + h * 1000;
+    $('orbV').textContent = (Math.sqrt(GM_E / r) / 1000).toFixed(2) + ' km/s';
+    var minutes = 2 * Math.PI * Math.sqrt(r * r * r / GM_E) / 60;
+    $('orbT').textContent = minutes < 600 ? minutes.toFixed(1) + ' min' : (minutes / 60).toFixed(1) + ' h';
+  }
+  $('alt').addEventListener('input', orbit);
+
+  function length(m) {
+    if (m >= 1000) return sci(m / 1000, 'km');
+    if (m >= 1) return m.toPrecision(4) + ' m';
+    return (m * 1000).toPrecision(4) + ' mm';
+  }
+  function hole() {
+    var m = val('bhMass');
+    if (!(m > 0)) { $('bhOut').textContent = 'Enter a positive mass'; return; }
+    $('bhOut').textContent = length(2 * G * m * M_SUN / (C * C));
+  }
+  $('bhMass').addEventListener('input', hole);
+  document.querySelectorAll('[data-bh]').forEach(function (b) {
+    b.addEventListener('click', function () { $('bhMass').value = b.getAttribute('data-bh'); hole(); });
+  });
+
+  force(); orbit(); hole();
+})();
 </script>
 </body>
 </html>
