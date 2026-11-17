@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070b1c">
+<title>Solar Gravity | Explore Our Solar System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #070b1c;
+  --panel: rgba(16, 23, 48, .88);
+  --line: rgba(159, 174, 255, .18);
+  --muted: #a9b4d0;
+  --cyan: #79e6ee;
+  --violet: #a994ff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; color: #f5f7ff; background: var(--bg);
+  font-family: 'DM Sans', sans-serif; overflow-x: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -2;
+  background:
+    radial-gradient(ellipse at 18% 15%, rgba(91,65,160,.22), transparent 34%),
+    radial-gradient(ellipse at 82% 55%, rgba(26,100,151,.16), transparent 38%),
+    #070b1c;
+}
+nav {
+  height: 72px; padding: 0 clamp(20px, 6vw, 86px);
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--line); background: rgba(7,11,28,.72);
+  backdrop-filter: blur(14px); position: relative; z-index: 5;
+}
+.brand {
+  font: 700 16px 'Space Grotesk', sans-serif; letter-spacing: 2px;
+  color: #e9e7ff;
+}
+.brand span { color: var(--violet); }
+.nav-note { color: var(--muted); font-size: 11px; letter-spacing: 2px; }
+.hero { text-align: center; padding: 68px 20px 28px; }
+.eyebrow {
+  color: var(--cyan); letter-spacing: 3px; font-size: 10px;
+  font-weight: 700; text-transform: uppercase;
+}
+h1 {
+  font: 700 clamp(34px, 6vw, 66px)/1.12 'Space Grotesk', sans-serif;
+  letter-spacing: -2px; margin: 18px 0 14px;
+}
+h1 span {
+  background: linear-gradient(90deg, #a994ff, #79e6ee);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p {
+  max-width: 570px; margin: 0 auto; color: var(--muted);
+  line-height: 1.8; font-size: 14px;
+}
+.primary-btn {
+  margin-top: 24px; padding: 12px 22px; border: 1px solid rgba(169,148,255,.65);
+  border-radius: 30px; color: white; cursor: pointer; font-weight: 700;
+  letter-spacing: 1px; background: linear-gradient(110deg, #7256c9, #287e9d);
+  transition: transform .2s, box-shadow .2s;
+}
+.primary-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px #6b58d455; }
+#universe {
+  height: min(680px, 76vh); min-height: 500px; position: relative;
+  margin: 0 auto; max-width: 1500px; overflow: hidden;
+  background: radial-gradient(ellipse at center, rgba(33,40,83,.38), transparent 65%);
+}
+#space { position: absolute; inset: 0; }
+.hint {
+  position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  color: #b5bfd9; font-size: 11px; letter-spacing: 1px;
+  background: rgba(8,13,32,.68); border: 1px solid var(--line);
+  border-radius: 30px; padding: 9px 15px; white-space: nowrap;
+  pointer-events: none;
+}
+.panel {
+  display: none; position: absolute; z-index: 2; right: clamp(14px, 4vw, 58px);
+  top: 50%; transform: translateY(-50%); width: min(310px, calc(100% - 28px));
+  padding: 24px; border: 1px solid rgba(169,148,255,.38);
+  border-radius: 20px; background: var(--panel); backdrop-filter: blur(18px);
+  box-shadow: 0 20px 70px rgba(0,0,0,.4);
+}
+.panel.visible { display: block; animation: panelIn .3s ease-out; }
+@keyframes panelIn { from { opacity: 0; translate: 14px 0; } to { opacity: 1; translate: 0 0; } }
+.panel-top { display:flex; align-items:center; justify-content:space-between; }
+.panel-label { color: var(--cyan); font-size: 9px; letter-spacing: 2px; font-weight:700; }
+.close {
+  border: 0; background: transparent; color: #dce3ff; font-size: 25px;
+  cursor: pointer; line-height: 1;
+}
+.panel h2 { font: 700 27px 'Space Grotesk',sans-serif; margin: 13px 0 4px; }
+.description { color: var(--muted); font-size: 12px; line-height: 1.6; min-height: 38px; }
+.metric {
+  margin-top: 19px; padding: 15px; border-radius: 13px;
+  background: rgba(121,230,238,.08); border: 1px solid rgba(121,230,238,.16);
+}
+.metric strong { display:block; font: 700 31px 'Space Grotesk',sans-serif; color: var(--cyan); }
+.metric small { color: var(--muted); font-size: 10px; letter-spacing: 1px; }
+.field { display:block; color:#c5cde2; font-size:12px; margin:18px 0 7px; }
+input {
+  width:100%; padding:12px 13px; color:white; font:500 15px 'DM Sans',sans-serif;
+  background:#0b1229; border:1px solid #39466e; border-radius:9px; outline:none;
+}
+input:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(121,230,238,.1); }
+.result {
+  margin-top:13px; padding:14px; border-radius:12px; background:rgba(169,148,255,.1);
+}
+.result p { margin:0; color:#b9c2dc; font-size:9px; letter-spacing:1px; }
+.result strong { display:block; margin-top:6px; font:700 25px 'Space Grotesk',sans-serif; color:#c5b7ff; }
+.formula { color:#929fbd; font-size:10px; margin:12px 0 0; }
+.info {
+  max-width: 940px; margin: 30px auto 75px; padding: 0 22px;
+  display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px;
+}
+.info-card {
+  padding: 23px; border:1px solid var(--line); border-radius:17px;
+  background:rgba(16,23,48,.62);
+}
+.info-card h3 { font:600 18px 'Space Grotesk',sans-serif; margin:0 0 9px; }
+.info-card p { color:var(--muted); font-size:13px; line-height:1.8; margin:0; }
+.info-card .equation { color:var(--cyan); font:600 21px 'Space Grotesk',sans-serif; margin-top:12px; }
+footer {
+  border-top:1px solid var(--line); padding:25px 15px; text-align:center;
+  color:#8995b5; font-size:10px; letter-spacing:1.5px;
+}
+@media(max-width:760px) {
+  .nav-note { display:none; }
+  .hero { padding-top:48px; }
+  #universe { min-height:650px; height:80vh; }
+  .panel { top:auto; bottom:58px; right:50%; transform:translateX(50%); }
+  .hint { bottom:15px; }
+  .info { grid-template-columns:1fr; margin-top:22px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="brand">✦ SOLAR <span>GRAVITY</span></div>
+  <div class="nav-note">EXPLORE · DISCOVER · UNDERSTAND</div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">A journey through our solar system</div>
+  <h1>DISCOVER THE<br><span>POWER OF GRAVITY</span></h1>
+  <p>Travel through our solar system, select a planet, and discover how gravity changes the weight of an object across different worlds.</p>
+  <button class="primary-btn" id="exploreBtn">EXPLORE THE PLANETS ↓</button>
+</header>
+
+<main>
+  <section id="universe" aria-label="Interactive solar system">
+    <div id="space"></div>
+    <div class="hint">✦ Select any planet to explore its gravity</div>
+
+    <aside class="panel" id="planetPanel" aria-live="polite">
+      <div class="panel-top">
+        <span class="panel-label">PLANET EXPLORER</span>
+        <button class="close" id="closePanel" aria-label="Close planet details">×</button>
+      </div>
+      <h2 id="planetName">EARTH</h2>
+      <p class="description" id="planetDescription">Our home planet.</p>
+      <div class="metric">
+        <strong id="gravityValue">9.81</strong>
+        <small>GRAVITATIONAL ACCELERATION · m/s²</small>
+      </div>
+      <label class="field" for="massInput">Enter an object's mass (kg)</label>
+      <input id="massInput" type="number" min="0.1" max="100000" step="0.1" value="50">
+      <div class="result">
+        <p>THE OBJECT'S WEIGHT HERE</p>
+        <strong id="weightResult">490.50 N</strong>
+      </div>
+      <p class="formula">Weight = Mass × Gravitational acceleration</p>
+    </aside>
+  </section>
+
+  <section class="info">
+    <article class="info-card">
+      <h3>What is gravity?</h3>
+      <p>Gravity is the attractive force between objects that have mass. It keeps planets moving around the Sun and gives objects weight on the surface of a planet.</p>
+    </article>
+    <article class="info-card">
+      <h3>Mass and weight are different</h3>
+      <p>Mass stays the same wherever an object goes. Weight changes because each planet has a different surface gravitational acceleration.</p>
+      <div class="equation">W = m × g</div>
+    </article>
+  </section>
+</main>
+
+<footer>AN INTERACTIVE PHYSICS PROJECT · GRAVITATION</footer>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+
+const host = document.getElementById('space');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 500);
+camera.position.set(0, 34, 48);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+host.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff, 1.35));
+const sunLight = new THREE.PointLight(0xffe0a0, 950, 150);
+scene.add(sunLight);
+
+const sun = new THREE.Mesh(
+  new THREE.SphereGeometry(2.35, 48, 48),
+  new THREE.MeshBasicMaterial({ color: 0xffc15a })
+);
+scene.add(sun);
+
+const sunGlow = new THREE.Mesh(
+  new THREE.SphereGeometry(3.15, 32, 32),
+  new THREE.MeshBasicMaterial({ color: 0xff9f43, transparent: true, opacity: 0.10 })
+);
+scene.add(sunGlow);
+
+// A field of distant stars
+const starPositions = [];
+for (let i = 0; i < 2200; i++) {
+  starPositions.push(
+    (Math.random() - 0.5) * 150,
+    (Math.random() - 0.5) * 85,
+    (Math.random() - 0.5) * 100
+  );
+}
+const starGeometry = new THREE.BufferGeometry();
+starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+const stars = new THREE.Points(
+  starGeometry,
+  new THREE.PointsMaterial({ color: 0xdce6ff, size: 0.12, transparent: true, opacity: 0.85 })
+);
+scene.add(stars);
+
+// Visual orbit distances are compressed so all planets remain visible.
+const planets = [
+  { name:'Mercury', radius:.34, orbit:4.3, speed:.90, gravity:3.70, color:0xaaa39b, desc:'The smallest planet, with a thin and rocky surface.' },
+  { name:'Venus', radius:.53, orbit:6.5, speed:.66, gravity:8.87, color:0xe6b86f, desc:'A rocky world with a very thick atmosphere.' },
+  { name:'Earth', radius:.58, orbit:8.9, speed:.52, gravity:9.81, color:0x318ce7, desc:'Our home planet. Its surface gravity is about 9.81 m/s².' },
+  { name:'Mars', radius:.44, orbit:11.4, speed:.40, gravity:3.71, color:0xc65c39, desc:'The Red Planet has less than half of Earth’s surface gravity.' },
+  { name:'Jupiter', radius:1.05, orbit:15.0, speed:.22, gravity:24.79, color:0xd7ad82, desc:'The largest planet in our solar system, with very strong surface gravity.' },
+  { name:'Saturn', radius:.91, orbit:19.0, speed:.16, gravity:10.44, color:0xd9c18a, desc:'A gas giant famous for its spectacular rings.' },
+  { name:'Uranus', radius:.70, orbit:23.0, speed:.12, gravity:8.69, color:0x83d5dc, desc:'A distant ice giant with a blue-green appearance.' },
+  { name:'Neptune', radius:.68, orbit:27.0, speed:.095, gravity:11.15, color:0x3f68d7, desc:'A cold, distant ice giant with powerful winds.' }
+];
+
+const planetMeshes = [];
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+
+function makeOrbit(radius) {
+  const points = [];
+  for (let i = 0; i <= 160; i++) {
+    const a = (i / 160) * Math.PI * 2;
+    points.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
+  }
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.LineLoop(
+    geometry,
+    new THREE.LineBasicMaterial({ color: 0x65719b, transparent: true, opacity: 0.34 })
+  );
+  scene.add(line);
+}
+
+planets.forEach((data, index) => {
+  makeOrbit(data.orbit);
+
+  const pivot = new THREE.Group();
+  scene.add(pivot);
+
+  const material = new THREE.MeshStandardMaterial({
+    color: data.color,
+    roughness: 0.88,
+    metalness: 0.02
+  });
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(data.radius, 40, 40), material);
+  mesh.position.set(data.orbit, 0, 0);
+  mesh.userData.planet = data;
+  pivot.add(mesh);
+  planetMeshes.push({ pivot, mesh, data });
+
+  if (data.name === 'Saturn') {
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(1.15, 1.75, 80),
+      new THREE.MeshBasicMaterial({
+        color: 0xd8c49b, side: THREE.DoubleSide, transparent: true, opacity: 0.72
+      })
+    );
+    ring.rotation.x = -Math.PI / 2.35;
+    mesh.add(ring);
+  }
+});
+
+// Earth’s Moon: a small companion revolving around Earth.
+const earthEntry = planetMeshes.find(p => p.data.name === 'Earth');
+const moonPivot = new THREE.Group();
+earthEntry.mesh.add(moonPivot);
+const moon = new THREE.Mesh(
+  new THREE.SphereGeometry(0.13, 20, 20),
+  new THREE.MeshStandardMaterial({ color: 0xc9cbd2, roughness: 1 })
+);
+moon.position.x = 1.15;
+moonPivot.add(moon);
+
+function resize() {
+  const width = host.clientWidth;
+  const height = host.clientHeight;
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(width, height);
+}
+window.addEventListener('resize', resize);
+resize();
+
+const panel = document.getElementById('planetPanel');
+const massInput = document.getElementById('massInput');
+let selectedPlanet = null;
+
+function updateWeight() {
+  if (!selectedPlanet) return;
+  const mass = Number(massInput.value);
+  const result = document.getElementById('weightResult');
+  if (!Number.isFinite(mass) || mass <= 0 || mass > 100000) {
+    result.textContent = 'Enter a valid mass';
+    return;
+  }
+  result.textContent = (mass * selectedPlanet.gravity).toFixed(2) + ' N';
+}
+
+function selectPlanet(data) {
+  selectedPlanet = data;
+  document.getElementById('planetName').textContent = data.name.toUpperCase();
+  document.getElementById('planetDescription').textContent = data.desc;
+  document.getElementById('gravityValue').textContent = data.gravity.toFixed(2);
+  panel.classList.add('visible');
+  updateWeight();
+}
+
+renderer.domElement.addEventListener('pointerdown', event => {
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(planetMeshes.map(p => p.mesh), false);
+  if (hits.length) selectPlanet(hits[0].object.userData.planet);
+});
+
+massInput.addEventListener('input', updateWeight);
+document.getElementById('closePanel').addEventListener('click', () => {
+  panel.classList.remove('visible');
+});
+document.getElementById('exploreBtn').addEventListener('click', () => {
+  document.getElementById('universe').scrollIntoView({ behavior: 'smooth' });
+});
+
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = Math.min(clock.getDelta(), 0.05);
+
+  planetMeshes.forEach(({ pivot, mesh, data }) => {
+    pivot.rotation.y += data.speed * delta * 0.20;
+    mesh.rotation.y += delta * 0.18;
+  });
+  moonPivot.rotation.y += delta * 0.8;
+  sun.rotation.y += delta * 0.08;
+  sunGlow.scale.setScalar(1 + Math.sin(performance.now() * 0.0015) * 0.025);
+  stars.rotation.y += delta * 0.003;
+
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
